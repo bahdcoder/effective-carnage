@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bets      Bet[]
+
+  @@map("users")
+}
+
+// Sports event model
+model Event {
+  id        String   @id @default(uuid())
+  eventName String
+  odds      Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bets      Bet[]
+
+  @@map("events")
+}
+
+// Bet model to track user bets
+model Bet {
+  id        String   @id @default(uuid())
+  amount    Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([eventId])
+  @@map("bets")
+}

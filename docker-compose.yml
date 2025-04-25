@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: betting-platform-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: betting_platform
+      POSTGRES_USER: betting_platform_user
+      POSTGRES_PASSWORD: P@ssw0rd_S3cur3_DB_2025!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - betting-platform-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: betting-platform-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - betting-platform-network
+
+networks:
+  betting-platform-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
