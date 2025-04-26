@@ -45,7 +45,7 @@ export class ProdSsrHandler extends BaseSsrHandler {
 	 * Load the HTML template
 	 */
 	protected async loadTemplate(_url: string): Promise<string> {
-		return await fs.readFile("./build/entry/client/index.html", "utf-8")
+		return await fs.readFile("./build/entry/client/public/index.html", "utf-8")
 	}
 
 	/**

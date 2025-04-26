@@ -12,6 +12,7 @@ import { useSession } from "@/app/state/session-state"
 import { Button } from "@/app/ui/button"
 import { usePlaceBetMutation } from "@/app/pages/events/hooks/use-place-bet.mutation"
 import { ServerErrorMessage } from "@/app/components/validation-errors"
+import { useGetAssetsPath } from "@/app/hooks/use-get-assets-path.hooks"
 
 export interface PlaceBetDialogProps {
 	event?: Event | null
@@ -25,6 +26,8 @@ export function PlaceBetDialog({
 	onOpenChange,
 }: PlaceBetDialogProps) {
 	const { user, dialog: sessionDialog } = useSession()
+
+	const getAssetsPath = useGetAssetsPath()
 
 	const { mutate, isPending, error } = usePlaceBetMutation({
 		eventId: event?.id || "",
@@ -54,7 +57,7 @@ export function PlaceBetDialog({
 					{event ? (
 						<div className="relative w-full overflow-hidden">
 							<img
-								src={getEventCoverImage(event.eventName)}
+								src={getAssetsPath(getEventCoverImage(event.eventName))}
 								alt={event.eventName}
 								className="w-full object-cover"
 							/>

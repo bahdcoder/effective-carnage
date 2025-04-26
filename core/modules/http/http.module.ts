@@ -1,6 +1,4 @@
 import compression from "compression"
-import sirv from "sirv"
-import helmet from "helmet"
 import cors from "cors"
 import express from "express"
 import cookieSession from "cookie-session"
@@ -10,6 +8,7 @@ import { scopePerRequest } from "awilix-express"
 import type { ModuleApplicationContext } from "@/modules/module.contract.js"
 import { resolve } from "@/utils/container/resolve.js"
 import { BaseModule } from "@/modules/shared/base.module.js"
+import path from "node:path"
 
 export class HttpModule extends BaseModule {
   name = "http"
@@ -27,7 +26,6 @@ export class HttpModule extends BaseModule {
     if (config.isProd) {
       this.registerCompressionMiddleware(ctx)
       this.registerStaticFilesMiddleware(ctx)
-      this.registerSecurityHeadersMiddleware(ctx)
     }
   }
 
@@ -35,24 +33,14 @@ export class HttpModule extends BaseModule {
     app.use(compression())
   }
 
-  private registerStaticFilesMiddleware({
-    app,
-    container,
-  }: ModuleApplicationContext) {
-    const { BASE } = resolve(container, "env")
-
-    app.use(BASE, sirv("./build/entry/client", { extensions: [] }))
-  }
-
-  private registerSecurityHeadersMiddleware({ app }: ModuleApplicationContext) {
+  private registerStaticFilesMiddleware({ app }: ModuleApplicationContext) {
     app.use(
-      helmet({
-        contentSecurityPolicy: {
-          directives: {
-            "script-src": ["'self'"],
-          },
-        },
-      })
+      "/assets",
+      express.static(path.resolve(process.cwd(), "./build/entry/client/assets"))
+    )
+    app.use(
+      "/assets",
+      express.static(path.resolve(process.cwd(), "./build/entry/client"))
     )
   }
 

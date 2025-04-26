@@ -74,6 +74,7 @@ Given enough time, I would highly improve the server with the following packages
 3. `Hpp` against http parameter pollution attacks
 4. Monitoring and error tracking with tools like `Sentry` and `Open Telemetry`
 5. Health checks endpoint for load balancers and status pages
+6. Setup content security protocols for how assets are loaded and executed on the frontend.
 
 There are a lot other security and monitoring focused middleware I will consider installing.
 

@@ -7,6 +7,8 @@ import * as RadixContext from "@radix-ui/react-context"
 import { type PropsWithChildren, useState } from "react"
 
 export interface SessionState {
+	isDev?: boolean
+	isProd?: boolean
 	user?: SessionStateUser | null
 	refreshSessionState?: () => void
 	destroySessionState?: () => void
@@ -41,6 +43,8 @@ export function SessionProvider({
 	return (
 		<SessionProviderInternal
 			user={data}
+			isDev={sessionState?.isDev}
+			isProd={sessionState?.isProd}
 			destroySessionState={mutate}
 			refreshSessionState={refreshSessionState}
 			dialog={{ open, onOpenChange }}

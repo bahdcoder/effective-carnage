@@ -1,3 +1,4 @@
+import { useGetAssetsPath } from "@/app/hooks/use-get-assets-path.hooks"
 import { getEventCoverImage } from "@/app/pages/events/helpers/get-event-cover-image.helper"
 import { Button } from "@/app/ui/button"
 import type { Event } from "@prisma/client"
@@ -8,11 +9,12 @@ export interface EventCardProps {
 }
 
 export function EventCard({ event, onSelect }: EventCardProps) {
+	const getAssetsPath = useGetAssetsPath()
 	return (
 		<div
 			style={{
-				backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(${getEventCoverImage(
-					event.eventName,
+				backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(${getAssetsPath(
+					getEventCoverImage(event.eventName),
 				)})`,
 			}}
 			className="w-full bg-cover group relative rounded-xl bg-center h-48 border border-border hover:border-primary transition ease-linear cursor-pointer transform hover:scale-105"

@@ -78,7 +78,11 @@ export abstract class BaseSsrHandler {
 				response,
 				logger: this.logger,
 				// Pass session data to the render function
-				sessionState,
+				sessionState: {
+					...sessionState,
+					isProd: request.app.locals.env.NODE_ENV === "production",
+					isDev: request.app.locals.env.NODE_ENV === "development",
+				},
 			})
 		} catch (error: unknown) {
 			this.handleError(
