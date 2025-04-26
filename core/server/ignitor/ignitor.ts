@@ -1,8 +1,8 @@
 import { asValue, type AwilixContainer, createContainer } from "awilix"
 import express, { type Express, type Request, type Response } from "express"
 import type {
-	ModuleApplicationContext,
-	ModuleContract,
+  ModuleApplicationContext,
+  ModuleContract,
 } from "@/modules/module.contract.js"
 import { EnvModule } from "@/modules/env/env.module.js"
 import { ConfigModule } from "@/modules/config/config.module.js"
@@ -15,136 +15,120 @@ import { RouterModule } from "@/modules/api/router/router.module.js"
 import { EventModule } from "@/modules/api/events/events.module.js"
 import { AuthModule } from "@/modules/api/auth/auth.module.js"
 import { ErrorsModule } from "@/modules/errors/errors.module.js"
-
 import { BetModule } from "@/modules/api/bets/bets.module.js"
-/**
- * Configuration options for the Ignitor
- */
+
 export interface IgnitorConfig {
-	debug?: boolean
+  debug?: boolean
 }
 
 /**
- * Base Ignitor class that provides common functionality for server initialization
+ * Orchestrates the application bootstrap process with dependency injection.
+ * Manages the lifecycle of all application modules in the correct order,
+ * ensuring proper initialization and graceful shutdown of services.
  */
 export abstract class Ignitor {
-	protected app: Express
-	protected logger: Logger
-	protected container: AwilixContainer = createContainer({
-		strict: true,
-	})
+  protected app: Express
+  protected logger: Logger
+  protected container: AwilixContainer = createContainer({
+    strict: true,
+  })
 
-	protected modules: ModuleContract[] = [
-		/** Register env and config. Must be the most early registered modules as they load environment information */
-		new EnvModule(),
-		new ConfigModule(),
+  protected modules: ModuleContract[] = [
+    new EnvModule(),
+    new ConfigModule(),
+    new RedisModule(),
+    new PrismaModule(),
+    new HttpModule(),
+    new RouterModule(),
+    new AuthModule(),
+    new EventModule(),
+    new BetModule(),
+    new ErrorsModule(),
+  ]
 
-		/* Setup databases immediately after env and config, as most modules rely on them */
-		new RedisModule(),
-		new PrismaModule(),
+  constructor(config: IgnitorConfig) {
+    this.app = express()
 
-		new HttpModule(),
-		new RouterModule(),
+    this.logger = pino({
+      level: config.debug ? "debug" : "info",
+      transport: config.debug
+        ? { target: "pino-pretty", options: { colorize: true } }
+        : undefined,
+    })
 
-		// api
-		new AuthModule(),
-		new EventModule(),
-		new BetModule(),
+    this.container.register({
+      logger: asValue(this.logger),
+    })
+  }
 
-		// error handling
-		new ErrorsModule(),
-	]
+  /**
+   * Initializes the application by setting up middleware and registering all modules.
+   * Follows a specific order to ensure dependencies are available when needed.
+   */
+  public async initialize(): Promise<void> {
+    await this.setup()
 
-	/**
-	 * Creates a new Ignitor instance
-	 * @param config Server configuration options
-	 */
-	constructor(config: IgnitorConfig) {
-		this.app = express()
+    for (const module of this.modules) {
+      this.logger.info(`registering module: ${module.name}`)
+      await module.register(this.ctx())
+    }
 
-		this.logger = pino({
-			level: config.debug ? "debug" : "info",
-			transport: config.debug
-				? { target: "pino-pretty", options: { colorize: true } }
-				: undefined,
-		})
+    this.app.use("*all", this.handle.bind(this))
+  }
 
-		this.container.register({
-			logger: asValue(this.logger),
-		})
-	}
+  /**
+   * Starts the HTTP server on the configured port and logs the access URL.
+   */
+  public start() {
+    const env = resolve(this.container, "env")
 
-	public async initialize(): Promise<void> {
-		await this.setup()
+    this.app.listen(env.PORT, () => {
+      this.logger.info(`Server started at http://127.0.0.1:${env.PORT}`)
+    })
+  }
 
-		for (const module of this.modules) {
-			this.logger.info(`registering module: ${module.name}`)
+  protected abstract setup(): Promise<void>
 
-			await module.register(this.ctx())
-		}
+  protected abstract handle(request: Request, response: Response): Promise<void>
 
-		this.app.use("*all", this.handle.bind(this))
-	}
+  /**
+   * Provides centralized error handling with environment-aware error details.
+   * In development, includes stack traces; in production, hides implementation details.
+   */
+  protected handleError(error: Error, res: Response): void {
+    this.logger.error(error)
 
-	/**
-	 * Start the HTTP server
-	 */
-	public start() {
-		const env = resolve(this.container, "env")
+    const config = resolve(this.container, "config")
+    const errorResponse = {
+      status: 500,
+      message: "Internal Server Error",
+      ...(config.isDev && error.stack ? { stack: error.stack } : {}),
+    }
 
-		this.app.listen(env.PORT, () => {
-			this.logger.info(`Server started at http://127.0.0.1:${env.PORT}`)
-		})
-	}
+    res.status(500).json(errorResponse)
+  }
 
-	/**
-	 * Setup middleware based on the environment
-	 * This is implemented by the derived classes
-	 */
-	protected abstract setup(): Promise<void>
+  /**
+   * Gracefully shuts down all modules in reverse initialization order.
+   * Ensures resources like database connections are properly closed.
+   */
+  public shutdown = async () => {
+    for (const module of this.modules) {
+      this.logger.info(`shutting down module: ${module.name}`)
 
-	/**
-	 * Handle incoming requests
-	 * @param req Express request object
-	 * @param res Express response object
-	 */
-	protected abstract handle(request: Request, response: Response): Promise<void>
+      await module.shutdown({
+        app: this.app,
+        logger: this.logger,
+        container: this.container,
+      })
+    }
+  }
 
-	/**
-	 * Handle errors in the request pipeline
-	 * @param error Error object
-	 * @param res Express response object
-	 */
-	protected handleError(error: Error, res: Response): void {
-		this.logger.error(error)
-
-		const config = resolve(this.container, "config")
-		const errorResponse = {
-			status: 500,
-			message: "Internal Server Error",
-			...(config.isDev && error.stack ? { stack: error.stack } : {}),
-		}
-
-		res.status(500).json(errorResponse)
-	}
-
-	public shutdown = async () => {
-		for (const module of this.modules) {
-			this.logger.info(`shutting down module: ${module.name}`)
-
-			await module.shutdown({
-				app: this.app,
-				logger: this.logger,
-				container: this.container,
-			})
-		}
-	}
-
-	public ctx() {
-		return {
-			app: this.app,
-			logger: this.logger,
-			container: this.container,
-		} satisfies ModuleApplicationContext
-	}
+  public ctx() {
+    return {
+      app: this.app,
+      logger: this.logger,
+      container: this.container,
+    } satisfies ModuleApplicationContext
+  }
 }

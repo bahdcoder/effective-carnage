@@ -12,35 +12,36 @@ import type { BetsService } from "@/modules/api/bets/services/bets.service.js"
 export type ContainerServicesKeys = "eventsService"
 
 export type ContainerKeys =
-	| "env"
-	| "config"
-	| "redis"
-	| "prisma"
-	| "logger"
-	| "router"
-
-	// services
-	| "eventsService"
-	| "usersService"
-	| "betsService"
+  | "env"
+  | "config"
+  | "redis"
+  | "prisma"
+  | "logger"
+  | "router"
+  | "eventsService"
+  | "usersService"
+  | "betsService"
 
 export type ContainerValues = {
-	env: Readonly<ApplicationEnv>
-	config: Readonly<ApplicationConfig>
-	redis: RedisClientType
-	prisma: PrismaClient
-	logger: Logger
-	router: Router
-
-	// services
-	eventsService: EventsService
-	usersService: UsersService
-	betsService: BetsService
+  env: Readonly<ApplicationEnv>
+  config: Readonly<ApplicationConfig>
+  redis: RedisClientType
+  prisma: PrismaClient
+  logger: Logger
+  router: Router
+  eventsService: EventsService
+  usersService: UsersService
+  betsService: BetsService
 }
 
+/**
+ * Provides type-safe dependency resolution from the application container.
+ * Ensures that dependencies are correctly typed when retrieved, preventing
+ * runtime type errors and enabling IDE autocompletion for container services.
+ */
 export function resolve<ContainerKey extends ContainerKeys>(
-	container: AwilixContainer,
-	key: ContainerKey,
+  container: AwilixContainer,
+  key: ContainerKey
 ) {
-	return container.resolve<ContainerValues[ContainerKey]>(key)
+  return container.resolve<ContainerValues[ContainerKey]>(key)
 }

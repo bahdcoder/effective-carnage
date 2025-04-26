@@ -2,19 +2,19 @@ import type { Response } from "express"
 import { Transform, type TransformCallback } from "node:stream"
 
 /**
- * Create a transform stream for piping React SSR output to the response
- * @param res Express response object
- * @returns Transform stream
+ * Creates a Node.js transform stream that pipes React SSR output directly to an Express response.
+ * This enables streaming server-rendered content to the client without buffering the entire output,
+ * improving time-to-first-byte and memory efficiency during rendering.
  */
 export function createTransformStream(res: Response): Transform {
-	return new Transform({
-		transform(
-			chunk: Buffer | string,
-			encoding: BufferEncoding,
-			callback: TransformCallback,
-		): void {
-			res.write(chunk, encoding)
-			callback()
-		},
-	})
+  return new Transform({
+    transform(
+      chunk: Buffer | string,
+      encoding: BufferEncoding,
+      callback: TransformCallback
+    ): void {
+      res.write(chunk, encoding)
+      callback()
+    },
+  })
 }

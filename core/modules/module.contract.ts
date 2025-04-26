@@ -2,26 +2,32 @@ import type { Express } from "express"
 import type { AwilixContainer } from "awilix"
 import type { Logger } from "pino"
 
+/**
+ * Provides essential application components to modules during initialization.
+ * Contains the Express app instance, dependency container, and logger.
+ */
 export interface ModuleApplicationContext {
-	app: Express
-	logger: Logger
-	container: AwilixContainer
+  app: Express
+  logger: Logger
+  container: AwilixContainer
 }
 
 /**
- * Module interface that all application modules must implement
+ * Defines the contract that all application modules must implement.
+ * Ensures consistent lifecycle management across different modules.
  */
 export interface ModuleContract {
-	/**
-	 * Name of the module
-	 */
-	name: string
+  name: string
 
-	/**
-	 * Register the module with the application
-	 * @param app Express application instance
-	 */
-	register(ctx: ModuleApplicationContext): Promise<void>
+  /**
+   * Initializes the module during application startup.
+   * Registers services, middleware, and performs any necessary setup.
+   */
+  register(ctx: ModuleApplicationContext): Promise<void>
 
-	shutdown(ctx: ModuleApplicationContext): Promise<void>
+  /**
+   * Performs cleanup during application shutdown.
+   * Closes connections, releases resources, and ensures graceful termination.
+   */
+  shutdown(ctx: ModuleApplicationContext): Promise<void>
 }

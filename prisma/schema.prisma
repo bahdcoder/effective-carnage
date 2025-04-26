@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model for authentication
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -21,7 +20,6 @@ model User {
   @@map("users")
 }
 
-// Sports event model
 model Event {
   id        String   @id @default(uuid())
   eventName String
@@ -33,14 +31,12 @@ model Event {
   @@map("events")
 }
 
-// Bet model to track user bets
 model Bet {
   id        String   @id @default(uuid())
   amount    Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
