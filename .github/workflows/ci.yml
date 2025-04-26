@@ -29,6 +29,9 @@ jobs:
     - name: start docker containers
       run: docker compose up --wait
 
+    - name: run database migrations
+      run: npm run prisma:migrate:development
+
     - name: create .env file
       run: |
         cat > .env << EOL

@@ -16,6 +16,7 @@
 		"checks:format": "biome format",
 		"format": "biome format --write .",
 		"prisma:generate": "prisma generate",
+		"prisma:migrate:development": "prisma migrate dev",
 		"prisma:migrate:production": "prisma migrate deploy",
 		"cli": "tsx core/cli/run.ts",
 		"lint": "biome lint --write .",
