@@ -21,4 +21,5 @@ coverage/*
 *.njsproj
 *.sln
 *.sw?
-# .env (keeping this in to make testing this repository much easier)
+.env
+.env.*

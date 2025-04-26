@@ -10,6 +10,33 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: checkout repository
       uses: actions/checkout@v4
@@ -23,26 +50,20 @@ jobs:
     - name: install dependencies
       run: npm ci
 
-    - name: generate prisma client
-      run: npm run prisma:generate
-
-    - name: start docker containers
-      run: docker compose up --wait
-
-    - name: run database migrations
-      run: npm run prisma:migrate:development
-
     - name: create .env file
       run: |
         cat > .env << EOL
-        NODE_ENV=test
+        NODE_ENV=development
         PORT=5173
         BASE=/
         ABORT_DELAY=10000
-        DATABASE_URL=postgresql://betting_platform_user:P@ssw0rd_S3cur3_DB_2025!@localhost:5433/betting_platform
-        REDIS_URL=redis://:@localhost:6380
+        DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
+        REDIS_URL=redis://localhost:6379
         APP_KEY=ci_test_key_12345678901234567890
         EOL
+
+    - name: generate prisma client
+      run: npm run prisma:generate
 
     - name: run lint check
       run: npm run checks:lint
@@ -63,7 +84,3 @@ jobs:
         npm run build:client
         npm run build:server
         npm run cli fix_typescript_imports
-
-    - name: stop docker containers
-      if: always()
-      run: docker compose down
