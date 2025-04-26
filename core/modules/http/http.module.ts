@@ -11,88 +11,91 @@ import { BaseModule } from "@/modules/shared/base.module.js"
 import path from "node:path"
 
 export class HttpModule extends BaseModule {
-	name = "http"
+  name = "http"
 
-	async register(ctx: ModuleApplicationContext) {
-		const config = resolve(ctx.container, "config")
+  async register(ctx: ModuleApplicationContext) {
+    const config = resolve(ctx.container, "config")
 
-		this.registerCorsMiddleware(ctx)
-		this.registerBodyParserMiddleware(ctx)
-		this.registerRateLimitMiddleware(ctx)
-		this.registerContainerScopeMiddleware(ctx)
+    this.registerCorsMiddleware(ctx)
+    this.registerBodyParserMiddleware(ctx)
+    this.registerRateLimitMiddleware(ctx)
+    this.registerContainerScopeMiddleware(ctx)
 
-		this.registerCookiesSessionMiddleware(ctx)
+    this.registerCookiesSessionMiddleware(ctx)
 
-		if (config.isProd) {
-			this.registerCompressionMiddleware(ctx)
-			this.registerStaticFilesMiddleware(ctx)
-		}
-	}
+    if (config.isProd) {
+      this.registerCompressionMiddleware(ctx)
+      this.registerStaticFilesMiddleware(ctx)
+    }
+  }
 
-	private registerCompressionMiddleware({ app }: ModuleApplicationContext) {
-		app.use(compression())
-	}
+  private registerCompressionMiddleware({ app }: ModuleApplicationContext) {
+    app.use(compression())
+  }
 
-	private registerStaticFilesMiddleware({ app }: ModuleApplicationContext) {
-		app.use(
-			"/assets",
-			express.static(
-				path.resolve(process.cwd(), "./build/entry/client/assets"),
-			),
-		)
-		app.use(
-			"/assets",
-			express.static(path.resolve(process.cwd(), "./build/entry/client")),
-		)
-	}
+  private registerStaticFilesMiddleware({ app }: ModuleApplicationContext) {
+    app.use(
+      "/assets",
+      express.static(path.resolve(process.cwd(), "./build/entry/client/assets"))
+    )
+    app.use(
+      "/assets",
+      express.static(path.resolve(process.cwd(), "./build/entry/client"))
+    )
 
-	private registerBodyParserMiddleware({ app }: ModuleApplicationContext) {
-		app.use(express.json())
-	}
+    app.use(
+      "/fonts",
+      express.static(path.resolve(process.cwd(), "./build/entry/client/fonts"))
+    )
+  }
 
-	private registerCorsMiddleware({ app }: ModuleApplicationContext) {
-		app.use(cors())
-	}
+  private registerBodyParserMiddleware({ app }: ModuleApplicationContext) {
+    app.use(express.json())
+  }
 
-	private registerContainerScopeMiddleware({
-		app,
-		container,
-	}: ModuleApplicationContext) {
-		app.use(scopePerRequest(container))
-	}
+  private registerCorsMiddleware({ app }: ModuleApplicationContext) {
+    app.use(cors())
+  }
 
-	private registerRateLimitMiddleware(ctx: ModuleApplicationContext) {
-		const redis = resolve(ctx.container, "redis")
-		const config = resolve(ctx.container, "config")
+  private registerContainerScopeMiddleware({
+    app,
+    container,
+  }: ModuleApplicationContext) {
+    app.use(scopePerRequest(container))
+  }
 
-		const limiter = rateLimit({
-			max: 60, // 60 seconds
-			windowMs: 60 * 1000, // 1 minute
-			standardHeaders: true,
-			legacyHeaders: false,
-			store: new RedisStore({
-				sendCommand: (...args: string[]) =>
-					redis.sendCommand(args) as Promise<RedisReply>,
-			}),
-		})
+  private registerRateLimitMiddleware(ctx: ModuleApplicationContext) {
+    const redis = resolve(ctx.container, "redis")
+    const config = resolve(ctx.container, "config")
 
-		if (config.isProd) {
-			ctx.app.use(limiter)
-		}
-	}
+    const limiter = rateLimit({
+      max: 60, // 60 seconds
+      windowMs: 60 * 1000, // 1 minute
+      standardHeaders: true,
+      legacyHeaders: false,
+      store: new RedisStore({
+        sendCommand: (...args: string[]) =>
+          redis.sendCommand(args) as Promise<RedisReply>,
+      }),
+    })
 
-	private registerCookiesSessionMiddleware({
-		app,
-		container,
-	}: ModuleApplicationContext) {
-		const env = resolve(container, "env")
+    if (config.isProd) {
+      ctx.app.use(limiter)
+    }
+  }
 
-		app.use(
-			cookieSession({
-				name: "___session",
-				maxAge: 24 * 60 * 60 * 1000, // 24 hours
-				keys: [env.APP_KEY],
-			}),
-		)
-	}
+  private registerCookiesSessionMiddleware({
+    app,
+    container,
+  }: ModuleApplicationContext) {
+    const env = resolve(container, "env")
+
+    app.use(
+      cookieSession({
+        name: "___session",
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        keys: [env.APP_KEY],
+      })
+    )
+  }
 }
