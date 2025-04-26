@@ -21,7 +21,8 @@
 		"baseUrl": ".",
 		"outDir": "build",
 		"paths": {
-			"@/*": ["./core/*"]
+			"@/*": ["./core/*"],
+			"@app/*": ["./core/app/*"]
 		}
 	},
 	"include": ["core", "src"],
