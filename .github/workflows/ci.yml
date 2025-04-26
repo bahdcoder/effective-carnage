@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v4
+
+    - name: set up node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: install dependencies
+      run: npm ci
+
+    - name: Generate Prisma client
+      run: npm run prisma:generate
+
+    - name: start docker containers
+      run: docker compose up -d
+
+    - name: create .env file
+      run: |
+        cat > .env << EOL
+        NODE_ENV=test
+        PORT=5173
+        BASE=/
+        ABORT_DELAY=10000
+        DATABASE_URL=postgresql://betting_platform_user:P@ssw0rd_S3cur3_DB_2025!@localhost:5433/betting_platform
+        REDIS_URL=redis://:@localhost:6380
+        APP_KEY=ci_test_key_12345678901234567890
+        EOL
+
+    - name: run lint check
+      run: npm run checks:lint
+
+    - name: run format check
+      run: npm run checks:format
+
+    - name: seed events
+      run: npm run cli seed_events
+
+    - name: run tests with coverage
+      run: npm run test:coverage
+
+    - name: build application
+      run: |
+        npm run clean:build
+        npm run build:core
+        npm run build:client
+        npm run build:server
+        npm run cli fix_typescript_imports
+
+    - name: stop docker containers
+      if: always()
+      run: docker compose down
