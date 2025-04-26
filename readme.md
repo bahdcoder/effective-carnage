@@ -1,5 +1,11 @@
 # Betting dashboard
 
+## View the live deployed application
+
+To access and deploy the application live, please visit the following url:
+
+(https://gamdom.katifrantz.com)[https://gamdom.katifrantz.com]
+
 ## Running the application locally
 
 1. Clone the repository to your local machine:
