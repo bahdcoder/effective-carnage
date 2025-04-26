@@ -93,7 +93,7 @@ export class HttpModule extends BaseModule {
     app.use(
       cookieSession({
         name: "___session",
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days, so you can test on postman without having to get new cookies.
         keys: [env.APP_KEY],
       })
     )
