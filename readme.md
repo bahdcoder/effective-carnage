@@ -97,8 +97,9 @@ npm run start
 
 I created a publicly accessible postman collection to help you test the API
 
-[https://www.postman.com/bahdcoder/frantz-s-public-space/collection/vsza0wk/gamdom-betting-platform?action=share&creator=3074141]
-(Visit the postman collection here)
+Visit the postman collection here:
+
+https://www.postman.com/bahdcoder/frantz-s-public-space/collection/vsza0wk/gamdom-betting-platform?action=share&creator=3074141
 
 ## About automated tests
 
