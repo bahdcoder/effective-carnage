@@ -62,8 +62,8 @@ jobs:
         APP_KEY=ci_test_key_12345678901234567890
         EOL
 
-    - name: generate prisma client
-      run: npm run prisma:generate
+    - name: run prisma migrations
+      run: npm run prisma:migrate:development
 
     - name: run lint check
       run: npm run checks:lint
