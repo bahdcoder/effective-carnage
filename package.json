@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "env-cmd -f .env tsx watch core/server/dev.ts",
-		"build": "npm run clean:build && npm run test:coverage && npm run lint && npm run format &&npm run build:core && npm run build:client && npm run build:server && npm run cli fix_typescript_imports",
+		"build": "npm run prisma:migrate:production && npm run clean:build && npm run test:coverage && npm run lint && npm run format &&npm run build:core && npm run build:client && npm run build:server && npm run cli fix_typescript_imports",
 		"build:core": "tsc",
 		"clean:build": "rimraf ./build",
 		"build:client": "vite build --outDir build/entry/client",
@@ -16,6 +16,7 @@
 		"checks:format": "biome format",
 		"format": "biome format --write .",
 		"prisma:generate": "prisma generate",
+		"prisma:migrate:production": "prisma migrate deploy",
 		"cli": "tsx core/cli/run.ts",
 		"lint": "biome lint --write .",
 		"checks:lint": "biome lint --error-on-warnings .",
