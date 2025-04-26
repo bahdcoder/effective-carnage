@@ -1,6 +1,6 @@
 import type {
-  ModuleApplicationContext,
-  ModuleContract,
+	ModuleApplicationContext,
+	ModuleContract,
 } from "@/modules/module.contract.js"
 
 /**
@@ -9,17 +9,17 @@ import type {
  * to simplify creation of new modules that may not need shutdown logic.
  */
 export class BaseModule implements ModuleContract {
-  name = "base"
+	name = "base"
 
-  /**
-   * Called during application startup to initialize the module.
-   * Override this method to register services, middleware, or perform setup.
-   */
-  async register(_ctx: ModuleApplicationContext) {}
+	/**
+	 * Called during application startup to initialize the module.
+	 * Override this method to register services, middleware, or perform setup.
+	 */
+	async register(_ctx: ModuleApplicationContext) {}
 
-  /**
-   * Called during application shutdown to clean up resources.
-   * Override this method to close connections or perform cleanup tasks.
-   */
-  async shutdown(_ctx: ModuleApplicationContext) {}
+	/**
+	 * Called during application shutdown to clean up resources.
+	 * Override this method to close connections or perform cleanup tasks.
+	 */
+	async shutdown(_ctx: ModuleApplicationContext) {}
 }

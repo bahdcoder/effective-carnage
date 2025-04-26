@@ -6,7 +6,7 @@ import type { ZodError } from "zod"
  * field-specific error messages for API responses.
  */
 export class ValidationException<T = object> extends Error {
-  constructor(public errors: ZodError<T>) {
-    super("Validation failed")
-  }
+	constructor(public errors: ZodError<T>) {
+		super("Validation failed")
+	}
 }

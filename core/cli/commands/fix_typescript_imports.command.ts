@@ -9,20 +9,20 @@ import type { Logger } from "pino"
  * Handles nested directory structures to ensure all compiled JS files are processed.
  */
 async function findJsFiles(dir: string): Promise<string[]> {
-  const files: string[] = []
-  const entries = await fs.readdir(dir, { withFileTypes: true })
+	const files: string[] = []
+	const entries = await fs.readdir(dir, { withFileTypes: true })
 
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name)
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name)
 
-    if (entry.isDirectory()) {
-      files.push(...(await findJsFiles(fullPath)))
-    } else if (entry.isFile() && entry.name.endsWith(".js")) {
-      files.push(fullPath)
-    }
-  }
+		if (entry.isDirectory()) {
+			files.push(...(await findJsFiles(fullPath)))
+		} else if (entry.isFile() && entry.name.endsWith(".js")) {
+			files.push(fullPath)
+		}
+	}
 
-  return files
+	return files
 }
 
 /**
@@ -31,9 +31,9 @@ async function findJsFiles(dir: string): Promise<string[]> {
  * that work in the compiled JavaScript output.
  */
 function getRelativePathToCore(filePath: string): string {
-  const fileDir = path.dirname(filePath)
-  const relativeToBuild = path.relative(fileDir, "build")
-  return relativeToBuild === "" ? "./" : `${relativeToBuild}/`
+	const fileDir = path.dirname(filePath)
+	const relativeToBuild = path.relative(fileDir, "build")
+	return relativeToBuild === "" ? "./" : `${relativeToBuild}/`
 }
 
 /**
@@ -42,36 +42,36 @@ function getRelativePathToCore(filePath: string): string {
  * with the correct relative paths based on each file's location.
  */
 async function fixImportsInFile(
-  filePath: string,
-  logger: Logger
+	filePath: string,
+	logger: Logger,
 ): Promise<void> {
-  try {
-    const content = await fs.readFile(filePath, "utf-8")
-    const relativeToCore = getRelativePathToCore(filePath)
+	try {
+		const content = await fs.readFile(filePath, "utf-8")
+		const relativeToCore = getRelativePathToCore(filePath)
 
-    const fixedContent = content
-      .replace(
-        /(from\s+["']|import\s+["']|export\s+(?:(?:{\s*[\w\s,]+\s*}|\*\s+as\s+\w+)\s+from\s+["']))@\/(.*?)["']/g,
-        (_match, importPrefix, importPath) => {
-          return `${importPrefix}${relativeToCore}${importPath}"`
-        }
-      )
-      .replace(
-        /(from\s+["']|import\s+["']|export\s+(?:(?:{\s*[\w\s,]+\s*}|\*\s+as\s+\w+)\s+from\s+["']))@app\/(.*?)["']/g,
-        (_match, importPrefix, importPath) => {
-          return `${importPrefix}${relativeToCore}core/app/${importPath}"`
-        }
-      )
+		const fixedContent = content
+			.replace(
+				/(from\s+["']|import\s+["']|export\s+(?:(?:{\s*[\w\s,]+\s*}|\*\s+as\s+\w+)\s+from\s+["']))@\/(.*?)["']/g,
+				(_match, importPrefix, importPath) => {
+					return `${importPrefix}${relativeToCore}${importPath}"`
+				},
+			)
+			.replace(
+				/(from\s+["']|import\s+["']|export\s+(?:(?:{\s*[\w\s,]+\s*}|\*\s+as\s+\w+)\s+from\s+["']))@app\/(.*?)["']/g,
+				(_match, importPrefix, importPath) => {
+					return `${importPrefix}${relativeToCore}core/app/${importPath}"`
+				},
+			)
 
-    if (content !== fixedContent) {
-      await fs.writeFile(filePath, fixedContent, "utf-8")
-      return logger.info(`Fixed imports in ${filePath}`)
-    }
+		if (content !== fixedContent) {
+			await fs.writeFile(filePath, fixedContent, "utf-8")
+			return logger.info(`Fixed imports in ${filePath}`)
+		}
 
-    logger.info(`No changes needed in ${filePath}`)
-  } catch (error) {
-    console.error(`Error processing ${filePath}:`, error)
-  }
+		logger.info(`No changes needed in ${filePath}`)
+	} catch (error) {
+		console.error(`Error processing ${filePath}:`, error)
+	}
 }
 
 /**
@@ -80,28 +80,28 @@ async function fixImportsInFile(
  * compiled JavaScript, causing runtime import errors with module resolution.
  */
 export function fixTypescriptImportsCommand() {
-  return command({
-    name: "fix_typescript_imports",
-    desc: "Rewrite import aliases in bundled files.",
-    async handler() {
-      const ignitor = new IgnitorCli()
+	return command({
+		name: "fix_typescript_imports",
+		desc: "Rewrite import aliases in bundled files.",
+		async handler() {
+			const ignitor = new IgnitorCli()
 
-      await ignitor.initialize()
-      const { logger } = ignitor.ctx()
-      logger.info("Fixing TypeScript imports in build directory...")
+			await ignitor.initialize()
+			const { logger } = ignitor.ctx()
+			logger.info("Fixing TypeScript imports in build directory...")
 
-      try {
-        const files = await findJsFiles("build")
-        logger.info(`Found ${files.length} JavaScript files`)
+			try {
+				const files = await findJsFiles("build")
+				logger.info(`Found ${files.length} JavaScript files`)
 
-        await Promise.all(files.map((file) => fixImportsInFile(file, logger)))
+				await Promise.all(files.map((file) => fixImportsInFile(file, logger)))
 
-        logger.info("Import paths fixed successfully!")
-      } catch (error) {
-        logger.error("Error fixing imports:", error)
-      }
+				logger.info("Import paths fixed successfully!")
+			} catch (error) {
+				logger.error("Error fixing imports:", error)
+			}
 
-      await ignitor.shutdown()
-    },
-  })
+			await ignitor.shutdown()
+		},
+	})
 }

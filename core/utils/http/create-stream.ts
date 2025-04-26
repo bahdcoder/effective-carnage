@@ -7,14 +7,14 @@ import { Transform, type TransformCallback } from "node:stream"
  * improving time-to-first-byte and memory efficiency during rendering.
  */
 export function createTransformStream(res: Response): Transform {
-  return new Transform({
-    transform(
-      chunk: Buffer | string,
-      encoding: BufferEncoding,
-      callback: TransformCallback
-    ): void {
-      res.write(chunk, encoding)
-      callback()
-    },
-  })
+	return new Transform({
+		transform(
+			chunk: Buffer | string,
+			encoding: BufferEncoding,
+			callback: TransformCallback,
+		): void {
+			res.write(chunk, encoding)
+			callback()
+		},
+	})
 }

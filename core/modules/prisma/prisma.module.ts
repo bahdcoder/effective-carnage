@@ -10,29 +10,29 @@ import { asValue } from "awilix"
  * and connection pooling for optimal performance.
  */
 export class PrismaModule extends BaseModule {
-  name = "prisma"
+	name = "prisma"
 
-  /**
-   * Initializes the Prisma client and establishes a database connection.
-   * Makes the client available to all other modules through dependency injection.
-   */
-  async register({ container }: ModuleApplicationContext) {
-    const prisma = new PrismaClient()
+	/**
+	 * Initializes the Prisma client and establishes a database connection.
+	 * Makes the client available to all other modules through dependency injection.
+	 */
+	async register({ container }: ModuleApplicationContext) {
+		const prisma = new PrismaClient()
 
-    await prisma.$connect()
+		await prisma.$connect()
 
-    container.register({
-      prisma: asValue(prisma),
-    })
-  }
+		container.register({
+			prisma: asValue(prisma),
+		})
+	}
 
-  /**
-   * Safely disconnects from the database during application shutdown.
-   * Ensures all queries are completed and connections are properly closed.
-   */
-  async shutdown({ container }: ModuleApplicationContext) {
-    const prisma = resolve(container, "prisma")
+	/**
+	 * Safely disconnects from the database during application shutdown.
+	 * Ensures all queries are completed and connections are properly closed.
+	 */
+	async shutdown({ container }: ModuleApplicationContext) {
+		const prisma = resolve(container, "prisma")
 
-    await prisma.$disconnect()
-  }
+		await prisma.$disconnect()
+	}
 }

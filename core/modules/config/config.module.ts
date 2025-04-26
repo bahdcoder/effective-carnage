@@ -4,9 +4,9 @@ import { resolve } from "@/utils/container/resolve.js"
 import { asValue } from "awilix"
 
 export interface ApplicationConfig {
-  isDev: boolean
-  isProd: boolean
-  isTest: boolean
+	isDev: boolean
+	isProd: boolean
+	isTest: boolean
 }
 
 /**
@@ -15,21 +15,21 @@ export interface ApplicationConfig {
  * direct string comparisons throughout the codebase.
  */
 export class ConfigModule extends BaseModule {
-  public name = "config"
+	public name = "config"
 
-  /**
-   * Transforms raw environment variables into a structured configuration object.
-   * Registers boolean flags for environment checks to simplify conditional logic.
-   */
-  async register({ container }: ModuleApplicationContext) {
-    const env = resolve(container, "env")
+	/**
+	 * Transforms raw environment variables into a structured configuration object.
+	 * Registers boolean flags for environment checks to simplify conditional logic.
+	 */
+	async register({ container }: ModuleApplicationContext) {
+		const env = resolve(container, "env")
 
-    container.register({
-      config: asValue({
-        isDev: env.NODE_ENV === "development",
-        isProd: env.NODE_ENV === "production",
-        isTest: env.NODE_ENV === "test",
-      }),
-    })
-  }
+		container.register({
+			config: asValue({
+				isDev: env.NODE_ENV === "development",
+				isProd: env.NODE_ENV === "production",
+				isTest: env.NODE_ENV === "test",
+			}),
+		})
+	}
 }

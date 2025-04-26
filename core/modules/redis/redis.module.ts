@@ -9,33 +9,33 @@ import { BaseModule } from "@/modules/shared/base.module.js"
  * Ensures a single shared connection is available throughout the application lifecycle.
  */
 export class RedisModule extends BaseModule {
-  name = "redis"
+	name = "redis"
 
-  /**
-   * Establishes a Redis connection using environment configuration
-   * and registers the client in the dependency container.
-   */
-  async register({ container }: ModuleApplicationContext) {
-    const env = resolve(container, "env")
+	/**
+	 * Establishes a Redis connection using environment configuration
+	 * and registers the client in the dependency container.
+	 */
+	async register({ container }: ModuleApplicationContext) {
+		const env = resolve(container, "env")
 
-    const client = createClient({
-      url: env.REDIS_URL,
-    })
+		const client = createClient({
+			url: env.REDIS_URL,
+		})
 
-    await client.connect()
+		await client.connect()
 
-    container.register({
-      redis: asValue(client),
-    })
-  }
+		container.register({
+			redis: asValue(client),
+		})
+	}
 
-  /**
-   * Gracefully closes the Redis connection during application shutdown
-   * to prevent connection leaks and ensure data integrity.
-   */
-  async shutdown({ container }: ModuleApplicationContext) {
-    const client = resolve(container, "redis")
+	/**
+	 * Gracefully closes the Redis connection during application shutdown
+	 * to prevent connection leaks and ensure data integrity.
+	 */
+	async shutdown({ container }: ModuleApplicationContext) {
+		const client = resolve(container, "redis")
 
-    await client.quit()
-  }
+		await client.quit()
+	}
 }
