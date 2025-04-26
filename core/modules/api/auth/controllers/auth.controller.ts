@@ -1,93 +1,102 @@
-import { createUserSchema } from "@/modules/api/auth/dto/create-user.dto"
-import { UsersService } from "@/modules/api/auth/services/users.service"
-import { ModuleApplicationContext } from "@/modules/module.contract"
-import { BaseController } from "@/modules/shared/controllers/base.controller"
-import { resolve } from "@/utils/container/resolve"
-import { Request, Response } from "express"
-import { StatusCodes } from "http-status-codes"
+import { createUserSchema } from "@/modules/api/auth/dto/create-user.dto";
+import { loginUserSchema } from "@/modules/api/auth/dto/login-user.dto";
+import type { UsersService } from "@/modules/api/auth/services/users.service";
+import { HttpResponse } from "@/modules/http/helpers/response.helper";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
+import { BaseController } from "@/modules/shared/controllers/base.controller";
+import { resolve } from "@/utils/container/resolve";
+import type { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
 export class AuthController extends BaseController {
-  protected usersService: UsersService
+	protected usersService: UsersService;
 
-  constructor(ctx: ModuleApplicationContext) {
-    super(ctx)
-    this.usersService = resolve(ctx.container, "usersService")
-  }
+	constructor(ctx: ModuleApplicationContext) {
+		super(ctx);
+		this.usersService = resolve(ctx.container, "usersService");
+	}
 
-  get = async (request: Request, response: Response) => {
-    const userSession = request.session?.user
+	get = async (request: Request, response: Response) => {
+		const userSession = request.session?.user;
 
-    if (!userSession) {
-      response.status(StatusCodes.UNAUTHORIZED).json({
-        message: "You are not logged in.",
-      })
+		if (!userSession) {
+			new HttpResponse(response).status(StatusCodes.OK).json({ data: null });
 
-      return
-    }
+			return;
+		}
 
-    const user = await this.usersService.findByEmail(userSession.email)
+		const user = await this.usersService.findByEmail(userSession.email);
 
-    if (!user) {
-      request.session = null
-      response.status(StatusCodes.UNAUTHORIZED).json({
-        message: "You are not logged in.",
-      })
+		if (!user) {
+			request.session = null;
+			new HttpResponse(response).status(StatusCodes.OK).json({ data: null });
 
-      return
-    }
+			return;
+		}
 
-    response.json({ user })
-  }
+		const { password, ...userWithoutPassword } = user;
 
-  store = async (request: Request, response: Response) => {
-    const data = await this.validate(request.body, createUserSchema())
+		new HttpResponse(response)
+			.status(StatusCodes.OK)
+			.json({ data: userWithoutPassword });
+	};
 
-    const user = await this.usersService.create(data)
+	store = async (request: Request, response: Response) => {
+		const data = await this.validate(
+			request.body,
+			createUserSchema(this.usersService),
+		);
 
-    request.session = { user }
+		const { password, ...user } = await this.usersService.create(data);
 
-    response.status(StatusCodes.CREATED).json()
-  }
+		request.session = { user };
 
-  destroy = async (request: Request, response: Response) => {
-    request.session = null
+		new HttpResponse(response).status(StatusCodes.OK).json({
+			data: user,
+		});
+	};
 
-    response.status(StatusCodes.OK).json(undefined)
-  }
+	destroy = async (request: Request, response: Response) => {
+		request.session = null;
 
-  update = async (request: Request, response: Response) => {
-    const data = await this.validate(request.body, createUserSchema())
+		response.status(StatusCodes.OK).json(undefined);
+	};
 
-    const user = await this.usersService.findByEmail(data.email)
+	update = async (request: Request, response: Response) => {
+		const data = await this.validate(request.body, loginUserSchema());
 
-    const unauthorizedMessage =
-      "Invalid credentials provided. Please check your email or password again."
+		const user = await this.usersService.findByEmail(data.email);
 
-    if (!user) {
-      response.status(StatusCodes.UNAUTHORIZED).json({
-        message: unauthorizedMessage,
-      })
+		const unauthorizedMessage =
+			"Invalid credentials provided. Please check your email or password again.";
 
-      return
-    }
+		if (!user) {
+			new HttpResponse(response).status(StatusCodes.UNAUTHORIZED).json({
+				message: unauthorizedMessage,
+			});
 
-    const isPasswordCorrect = await this.usersService.confirmPassword(
-      user,
-      data.password
-    )
+			return;
+		}
 
-    if (!isPasswordCorrect) {
-      response.status(StatusCodes.UNAUTHORIZED).json({
-        message: unauthorizedMessage,
-      })
+		const isPasswordCorrect = await this.usersService.confirmPassword(
+			user,
+			data.password,
+		);
 
-      return
-    }
+		if (!isPasswordCorrect) {
+			new HttpResponse(response).status(StatusCodes.UNAUTHORIZED).json({
+				message: unauthorizedMessage,
+			});
 
-    request.session = { user }
+			return;
+		}
 
-    response.status(StatusCodes.OK).json({
-      message: "Logged in successfully.",
-    })
-  }
+		const { password, ...userWithoutPassword } = user;
+
+		request.session = { user: userWithoutPassword };
+
+		new HttpResponse(response).status(StatusCodes.OK).json({
+			message: "Logged in successfully.",
+		});
+	};
 }

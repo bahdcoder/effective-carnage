@@ -2,11 +2,12 @@ import compression from "compression";
 import sirv from "sirv";
 import helmet from "helmet";
 import cors from "cors";
+import express from "express";
 import cookieSession from "cookie-session";
-import { RedisReply, RedisStore } from "rate-limit-redis";
+import { type RedisReply, RedisStore } from "rate-limit-redis";
 import { rateLimit } from "express-rate-limit";
 import { scopePerRequest } from "awilix-express";
-import { ModuleApplicationContext } from "@/modules/module.contract";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
 import { resolve } from "@/utils/container/resolve";
 import { BaseModule } from "@/modules/shared/base.module";
 
@@ -17,14 +18,16 @@ export class HttpModule extends BaseModule {
 		const config = resolve(ctx.container, "config");
 
 		this.registerCorsMiddleware(ctx);
+		this.registerBodyParserMiddleware(ctx);
 		this.registerRateLimitMiddleware(ctx);
 		this.registerContainerScopeMiddleware(ctx);
-		this.registerSecurityHeadersMiddleware(ctx);
+
 		this.registerCookiesSessionMiddleware(ctx);
 
 		if (config.isProd) {
 			this.registerCompressionMiddleware(ctx);
 			this.registerStaticFilesMiddleware(ctx);
+			this.registerSecurityHeadersMiddleware(ctx);
 		}
 	}
 
@@ -51,6 +54,10 @@ export class HttpModule extends BaseModule {
 				},
 			}),
 		);
+	}
+
+	private registerBodyParserMiddleware({ app }: ModuleApplicationContext) {
+		app.use(express.json());
 	}
 
 	private registerCorsMiddleware({ app }: ModuleApplicationContext) {

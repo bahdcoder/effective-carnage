@@ -1,15 +1,21 @@
-import "./root.css"
-import { SessionProvider, type SessionData } from "./state/session-state"
+import "./styles/root.css"
+import { SessionProvider, type SessionState } from "./state/session-state"
+import { QueryClientProvider } from "./state/query-state"
+import { RootLayout } from "@/app/layouts/root.layout"
+import { apiClient, ApiClientProvider } from "@/app/state/api-client-state"
 
 interface RootProps {
-  sessionData?: SessionData
+  sessionState?: SessionState
 }
 
-export function Root({ sessionData = {} }: RootProps) {
+export function Root({ sessionState = {} }: RootProps) {
   return (
-    <SessionProvider user={sessionData?.user}>
-      <h1>Hello world root</h1>
-      {/* You can access session data in any component using the useSession hook */}
-    </SessionProvider>
+    <QueryClientProvider>
+      <ApiClientProvider apiClient={apiClient}>
+        <SessionProvider sessionState={sessionState}>
+          <RootLayout />
+        </SessionProvider>
+      </ApiClientProvider>
+    </QueryClientProvider>
   )
 }

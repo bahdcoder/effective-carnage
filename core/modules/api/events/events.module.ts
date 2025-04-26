@@ -1,6 +1,6 @@
 import { EventsController } from "@/modules/api/events/controllers/events.controller";
 import { EventsService } from "@/modules/api/events/services/events.service";
-import { ModuleApplicationContext } from "@/modules/module.contract";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
 import { BaseModule } from "@/modules/shared/base.module";
 import { resolve } from "@/utils/container/resolve";
 import { asValue } from "awilix";
@@ -12,7 +12,7 @@ export class EventModule extends BaseModule {
 
 		this.registerServices(ctx);
 
-		const router = Router();
+		const router = Router({ mergeParams: true });
 
 		this.registerControllerRoutes(ctx, router);
 

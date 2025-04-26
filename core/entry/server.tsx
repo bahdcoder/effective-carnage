@@ -4,18 +4,18 @@ import {
   renderToPipeableStream,
 } from "react-dom/server"
 import { Root } from "../app/root"
-import type { SessionData } from "../app/state/session-state"
+import type { SessionState } from "../app/state/session-state"
 
 interface ServerRenderOptions extends RenderToPipeableStreamOptions {
-  sessionData?: SessionData
+  sessionState?: SessionState
 }
 
 export function render(_url: string, options?: ServerRenderOptions) {
-  const { sessionData = {}, ...streamOptions } = options || {}
+  const { sessionState = {}, ...streamOptions } = options || {}
 
   return renderToPipeableStream(
     <StrictMode>
-      <Root sessionData={sessionData} />
+      <Root sessionState={sessionState} />
     </StrictMode>,
     streamOptions
   )

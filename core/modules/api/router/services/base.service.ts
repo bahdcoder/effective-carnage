@@ -1,4 +1,4 @@
-import { ModuleApplicationContext } from "@/modules/module.contract";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
 import { resolve } from "@/utils/container/resolve";
 
 export class BaseService {

@@ -1,8 +1,21 @@
+import type { UsersService } from "@/modules/api/auth/services/users.service";
 import { z } from "zod";
 
-export function createUserSchema() {
+export function createUserSchema(usersService: UsersService) {
 	return z.object({
-		email: z.string().email(),
+		email: z
+			.string()
+			.email()
+			.refine(
+				async (email) => {
+					const user = await usersService.findByEmail(email);
+
+					return user === null;
+				},
+				{
+					message: "A user with this email already exists.",
+				},
+			),
 		password: z
 			.string()
 			.min(8)

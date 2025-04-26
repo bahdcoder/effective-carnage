@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
-import { Response } from "express";
+import type { Response } from "express";
 import type {
 	PipeableStream,
 	RenderToPipeableStreamOptions,
 } from "react-dom/server";
 import type { ViteDevServer } from "vite";
-import { Logger } from "pino";
+import type { Logger } from "pino";
 import { BaseSsrHandler } from "./base-ssr-handler";
 
 /**
@@ -45,7 +45,7 @@ export class DevSsrHandler extends BaseSsrHandler {
 	 * Load the HTML template
 	 */
 	protected async loadTemplate(url: string): Promise<string> {
-		let template = await fs.readFile("public/index.html", "utf-8");
+		const template = await fs.readFile("public/index.html", "utf-8");
 		return (await this.vite.transformIndexHtml(url, template)) || template;
 	}
 
@@ -69,8 +69,8 @@ export class DevSsrHandler extends BaseSsrHandler {
 	/**
 	 * Handle errors
 	 */
-	protected handleError(error: Error, res: Response): void {
+	protected handleError(error: Error, response: Response): void {
 		this.vite.ssrFixStacktrace(error);
-		this.errorHandler(error, res);
+		this.errorHandler(error, response);
 	}
 }

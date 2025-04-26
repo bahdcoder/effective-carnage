@@ -1,8 +1,7 @@
-import { ModuleApplicationContext } from "@/modules/module.contract";
-import { BaseModule } from "@/modules/shared/base.module";
+import { BaseModule } from "@/modules/shared/base.module"
 
 export class BaseApiModule extends BaseModule {
-	name = "base-api";
+  name = "base-api"
 
-	async register({}: ModuleApplicationContext) {}
+  async register() {}
 }

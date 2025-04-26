@@ -1,5 +1,5 @@
-import { Response } from "express";
-import { Transform, TransformCallback } from "node:stream";
+import type { Response } from "express";
+import { Transform, type TransformCallback } from "node:stream";
 
 /**
  * Create a transform stream for piping React SSR output to the response

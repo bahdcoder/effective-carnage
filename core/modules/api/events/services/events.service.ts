@@ -23,4 +23,12 @@ export class EventsService extends BaseService {
 
 		return getPaginationResponseData(events, count, limit, offset);
 	}
+
+	findById(id: string) {
+		return this.prisma().event.findFirst({
+			where: {
+				id,
+			},
+		});
+	}
 }

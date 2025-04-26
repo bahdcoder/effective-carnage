@@ -1,4 +1,4 @@
-import {
+import type {
 	ModuleApplicationContext,
 	ModuleContract,
 } from "@/modules/module.contract";

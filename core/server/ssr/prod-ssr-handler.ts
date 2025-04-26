@@ -1,10 +1,10 @@
 import fs from "node:fs/promises";
-import { Response } from "express";
+import type { Response } from "express";
 import type {
 	PipeableStream,
 	RenderToPipeableStreamOptions,
 } from "react-dom/server";
-import { Logger } from "pino";
+import type { Logger } from "pino";
 import { BaseSsrHandler } from "./base-ssr-handler";
 
 /**

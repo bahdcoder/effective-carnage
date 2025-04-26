@@ -1,5 +1,5 @@
-import { ModuleApplicationContext } from "@/modules/module.contract";
-import { Request, Response, NextFunction } from "express";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
+import type { Request, Response, NextFunction } from "express";
 
 export abstract class BaseMiddleware {
 	constructor(protected ctx: ModuleApplicationContext) {}

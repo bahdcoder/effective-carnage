@@ -1,12 +1,13 @@
-import { ApplicationEnv } from "@/modules/env/env.module";
-import { ApplicationConfig } from "@/modules/config/config.module";
-import { AwilixContainer } from "awilix";
-import { RedisClientType } from "redis";
-import { PrismaClient } from "@prisma/client";
-import { Logger } from "pino";
-import { Router } from "express";
-import { EventsService } from "@/modules/api/events/services/events.service";
-import { UsersService } from "@/modules/api/auth/services/users.service";
+import type { ApplicationEnv } from "@/modules/env/env.module";
+import type { ApplicationConfig } from "@/modules/config/config.module";
+import type { AwilixContainer } from "awilix";
+import type { RedisClientType } from "redis";
+import type { PrismaClient } from "@prisma/client";
+import type { Logger } from "pino";
+import type { Router } from "express";
+import type { EventsService } from "@/modules/api/events/services/events.service";
+import type { UsersService } from "@/modules/api/auth/services/users.service";
+import type { BetsService } from "@/modules/api/bets/services/bets.service";
 
 export type ContainerServicesKeys = "eventsService";
 
@@ -20,7 +21,8 @@ export type ContainerKeys =
 
 	// services
 	| "eventsService"
-	| "usersService";
+	| "usersService"
+	| "betsService";
 
 export type ContainerValues = {
 	env: Readonly<ApplicationEnv>;
@@ -33,6 +35,7 @@ export type ContainerValues = {
 	// services
 	eventsService: EventsService;
 	usersService: UsersService;
+	betsService: BetsService;
 };
 
 export function resolve<ContainerKey extends ContainerKeys>(

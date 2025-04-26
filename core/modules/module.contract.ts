@@ -1,6 +1,6 @@
 import type { Express } from "express";
-import { AwilixContainer } from "awilix";
-import { Logger } from "pino";
+import type { AwilixContainer } from "awilix";
+import type { Logger } from "pino";
 
 export interface ModuleApplicationContext {
 	app: Express;

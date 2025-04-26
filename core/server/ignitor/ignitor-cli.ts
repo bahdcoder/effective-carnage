@@ -1,25 +1,13 @@
-import { Ignitor } from "@/server/ignitor/ignitor";
-import { resolve } from "@/utils/container/resolve";
+import { Ignitor } from "@/server/ignitor/ignitor"
 
 export class IgnitorCli extends Ignitor {
-	constructor() {
-		super({
-			debug: true,
-		});
-	}
+  constructor() {
+    super({
+      debug: true,
+    })
+  }
 
-	async setup() {}
+  async setup() {}
 
-	async handle() {}
-
-	ctx() {
-		const prisma = resolve(this.container, "prisma");
-		const logger = resolve(this.container, "logger");
-
-		return {
-			prisma,
-			logger,
-			container: this.container,
-		};
-	}
+  async handle() {}
 }

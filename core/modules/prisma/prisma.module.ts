@@ -1,4 +1,4 @@
-import { ModuleApplicationContext } from "@/modules/module.contract";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
 import { BaseModule } from "@/modules/shared/base.module";
 import { resolve } from "@/utils/container/resolve";
 

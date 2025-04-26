@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { ModuleApplicationContext } from "@/modules/module.contract";
+import type { ModuleApplicationContext } from "@/modules/module.contract";
 import { resolve } from "@/utils/container/resolve";
 import { asValue } from "awilix";
 import { BaseModule } from "@/modules/shared/base.module";
