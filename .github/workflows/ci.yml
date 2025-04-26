@@ -27,7 +27,7 @@ jobs:
       run: npm run prisma:generate
 
     - name: start docker containers
-      run: docker compose up -d
+      run: docker compose up --wait
 
     - name: create .env file
       run: |
