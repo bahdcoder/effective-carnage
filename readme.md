@@ -4,7 +4,7 @@
 
 To access and deploy the application live, please visit the following url:
 
-(https://gamdom.katifrantz.com)[https://gamdom.katifrantz.com]
+[https://gamdom.katifrantz.com](https://gamdom.katifrantz.com)
 
 ## Running the application locally
 
@@ -97,7 +97,7 @@ npm run start
 
 I created a publicly accessible postman collection to help you test the API
 
-(https://www.postman.com/bahdcoder/frantz-s-public-space/collection/vsza0wk/gamdom-betting-platform?action=share&creator=3074141)[Visit the postman collection here]
+[https://www.postman.com/bahdcoder/frantz-s-public-space/collection/vsza0wk/gamdom-betting-platform?action=share&creator=3074141](Visit the postman collection here)
 
 ## About automated tests
 
