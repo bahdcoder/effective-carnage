@@ -3,9 +3,9 @@
  *
  * This file initializes the production server implementation.
  */
-import { IgnitorProd } from "./ignitor/ignitor-prod";
+import { IgnitorProd } from "./ignitor/ignitor-prod.js"
 
-const ignitor = new IgnitorProd();
+const ignitor = new IgnitorProd()
 
-await ignitor.initialize();
-ignitor.start();
+await ignitor.initialize()
+ignitor.start()

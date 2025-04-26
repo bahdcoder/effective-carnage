@@ -10,7 +10,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        app: "public/index.html",
         server: "core/entry/server.tsx",
         client: "core/entry/client.tsx",
       },
@@ -27,5 +26,6 @@ export default defineConfig({
     coverage: {
       provider: "v8",
     },
+    exclude: ["build/**", "**/node_modules/**"],
   },
 })

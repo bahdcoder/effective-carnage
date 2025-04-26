@@ -5,17 +5,17 @@ import { RootLayout } from "@/app/layouts/root.layout"
 import { apiClient, ApiClientProvider } from "@/app/state/api-client-state"
 
 interface RootProps {
-  sessionState?: SessionState
+	sessionState?: SessionState
 }
 
 export function Root({ sessionState = {} }: RootProps) {
-  return (
-    <QueryClientProvider>
-      <ApiClientProvider apiClient={apiClient}>
-        <SessionProvider sessionState={sessionState}>
-          <RootLayout />
-        </SessionProvider>
-      </ApiClientProvider>
-    </QueryClientProvider>
-  )
+	return (
+		<QueryClientProvider>
+			<ApiClientProvider apiClient={apiClient}>
+				<SessionProvider sessionState={sessionState}>
+					<RootLayout />
+				</SessionProvider>
+			</ApiClientProvider>
+		</QueryClientProvider>
+	)
 }

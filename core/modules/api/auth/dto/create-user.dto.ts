@@ -1,5 +1,5 @@
-import type { UsersService } from "@/modules/api/auth/services/users.service";
-import { z } from "zod";
+import type { UsersService } from "@/modules/api/auth/services/users.service.js"
+import { z } from "zod"
 
 export function createUserSchema(usersService: UsersService) {
 	return z.object({
@@ -8,9 +8,9 @@ export function createUserSchema(usersService: UsersService) {
 			.email()
 			.refine(
 				async (email) => {
-					const user = await usersService.findByEmail(email);
+					const user = await usersService.findByEmail(email)
 
-					return user === null;
+					return user === null
 				},
 				{
 					message: "A user with this email already exists.",
@@ -32,5 +32,5 @@ export function createUserSchema(usersService: UsersService) {
 			.refine((password) => /[!@#$%^&*]/.test(password), {
 				message: "Your password must contain at least one special character.",
 			}),
-	});
+	})
 }

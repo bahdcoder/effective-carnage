@@ -1,13 +1,13 @@
-import { Ignitor } from "@/server/ignitor/ignitor"
+import { Ignitor } from "@/server/ignitor/ignitor.js"
 
 export class IgnitorCli extends Ignitor {
-  constructor() {
-    super({
-      debug: true,
-    })
-  }
+	constructor() {
+		super({
+			debug: true,
+		})
+	}
 
-  async setup() {}
+	async setup() {}
 
-  async handle() {}
+	async handle() {}
 }

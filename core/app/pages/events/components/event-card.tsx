@@ -1,10 +1,10 @@
-import { getEventCoverImage } from "@/app/pages/events/helpers/get-event-cover-image.helper";
-import { Button } from "@/app/ui/button";
-import type { Event } from "@prisma/client";
+import { getEventCoverImage } from "@/app/pages/events/helpers/get-event-cover-image.helper"
+import { Button } from "@/app/ui/button"
+import type { Event } from "@prisma/client"
 
 export interface EventCardProps {
-	event: Event;
-	onSelect?: (event: Event) => void;
+	event: Event
+	onSelect?: (event: Event) => void
 }
 
 export function EventCard({ event, onSelect }: EventCardProps) {
@@ -28,5 +28,5 @@ export function EventCard({ event, onSelect }: EventCardProps) {
 				</Button>
 			</div>
 		</div>
-	);
+	)
 }

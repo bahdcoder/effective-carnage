@@ -1,7 +1,7 @@
-import { BaseModule } from "@/modules/shared/base.module"
+import { BaseModule } from "@/modules/shared/base.module.js"
 
 export class BaseApiModule extends BaseModule {
-  name = "base-api"
+	name = "base-api"
 
-  async register() {}
+	async register() {}
 }

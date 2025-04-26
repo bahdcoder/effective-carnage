@@ -1,10 +1,10 @@
 import type {
 	ModuleApplicationContext,
 	ModuleContract,
-} from "@/modules/module.contract";
+} from "@/modules/module.contract.js"
 
 export class BaseModule implements ModuleContract {
-	name = "base";
+	name = "base"
 
 	async register(_ctx: ModuleApplicationContext) {}
 

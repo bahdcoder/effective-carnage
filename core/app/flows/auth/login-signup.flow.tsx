@@ -5,26 +5,26 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/app/ui/dialog";
-import { type PropsWithChildren, useState } from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Input } from "@/app/ui/input";
-import { Label } from "@/app/ui/label";
-import { Button } from "@/app/ui/button";
+} from "@/app/ui/dialog"
+import { type PropsWithChildren, useState } from "react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Input } from "@/app/ui/input"
+import { Label } from "@/app/ui/label"
+import { Button } from "@/app/ui/button"
 import {
 	type AuthFlowMode,
 	type MutationPayload,
 	useLoginSignupMutation,
-} from "@/app/flows/auth/hooks/use-login-signup.mutation";
+} from "@/app/flows/auth/hooks/use-login-signup.mutation"
 import {
 	ServerErrorMessage,
 	ValidationErrorsForField,
-} from "@/app/components/validation-errors";
+} from "@/app/components/validation-errors"
 
 export interface LoginSignupFlowProps {
-	mode?: AuthFlowMode;
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
+	mode?: AuthFlowMode
+	open?: boolean
+	onOpenChange?: (open: boolean) => void
 }
 
 export const flowText: Record<
@@ -57,7 +57,7 @@ export const flowText: Record<
 		terms:
 			"By logging in, I agree to the terms and conditions of this betting platform.",
 	},
-};
+}
 
 export function LoginSignupFlow({
 	children,
@@ -65,30 +65,30 @@ export function LoginSignupFlow({
 	onOpenChange,
 	mode: defaultMode = "signup",
 }: PropsWithChildren<LoginSignupFlowProps>) {
-	const [mode, setMode] = useState<AuthFlowMode>(defaultMode);
+	const [mode, setMode] = useState<AuthFlowMode>(defaultMode)
 
 	const { mutate, isPending, error, reset } = useLoginSignupMutation({
 		onSuccess() {
-			onOpenChange?.(false);
+			onOpenChange?.(false)
 		},
-	});
+	})
 
-	const text = flowText[mode];
+	const text = flowText[mode]
 
 	function onToggleMode() {
-		setMode((current) => (current === "login" ? "signup" : "login"));
+		setMode((current) => (current === "login" ? "signup" : "login"))
 
-		reset();
+		reset()
 	}
 
 	function onFormSubmit(event: React.FormEvent<HTMLFormElement>) {
 		const payload = Object.fromEntries(
 			new FormData(event.currentTarget),
-		) as unknown as MutationPayload["payload"];
+		) as unknown as MutationPayload["payload"]
 
-		event.preventDefault();
+		event.preventDefault()
 
-		mutate({ payload, mode });
+		mutate({ payload, mode })
 	}
 
 	return (
@@ -160,5 +160,5 @@ export function LoginSignupFlow({
 				</form>
 			</DialogContent>
 		</Dialog>
-	);
+	)
 }

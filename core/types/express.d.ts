@@ -1,9 +1,9 @@
-import type { SessionState } from "@/app/state/session-state";
+import type { SessionState } from "@/app/state/session-state.js"
 
 declare global {
 	namespace Express {
 		interface Request {
-			session?: SessionState | null;
+			session?: SessionState | null
 		}
 	}
 }

@@ -1,10 +1,10 @@
-import { useApiClient } from "@/app/state/api-client-state";
-import { useMutation } from "@tanstack/react-query";
-import type { AxiosError, AxiosResponse } from "axios";
-import type { ServerResponse } from "@/modules/http/types/server-response.types";
-import { toast } from "sonner";
+import { useApiClient } from "@/app/state/api-client-state.js"
+import { useMutation } from "@tanstack/react-query"
+import type { AxiosError, AxiosResponse } from "axios"
+import type { ServerResponse } from "@/modules/http/types/server-response.types.js"
+import { toast } from "sonner"
 
-export type AuthFlowMode = "signup" | "login";
+export type AuthFlowMode = "signup" | "login"
 
 export type UseDestroySessionStateMutationProps = {
 	onSuccess?:
@@ -13,25 +13,25 @@ export type UseDestroySessionStateMutationProps = {
 				variables: undefined,
 				context: unknown,
 		  ) => Promise<unknown> | unknown)
-		| undefined;
-};
+		| undefined
+}
 
 export function useDestroySessionStateMutation({
 	onSuccess,
 }: UseDestroySessionStateMutationProps) {
-	const { apiClient } = useApiClient();
+	const { apiClient } = useApiClient()
 
 	return useMutation<
 		AxiosResponse<ServerResponse, undefined>,
 		AxiosError<ServerResponse>
 	>({
 		async mutationFn() {
-			return apiClient.delete("/users");
+			return apiClient.delete("/users")
 		},
 		onSuccess(response) {
-			onSuccess?.(response, undefined, undefined);
+			onSuccess?.(response, undefined, undefined)
 
-			toast.success("Successfully logged out.");
+			toast.success("Successfully logged out.")
 		},
-	});
+	})
 }

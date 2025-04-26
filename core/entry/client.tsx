@@ -4,16 +4,16 @@ import { Root } from "../app/root"
 import type { SessionState } from "../app/state/session-state"
 
 declare global {
-  interface Window {
-    __SESSION_DATA__?: SessionState
-  }
+	interface Window {
+		__SESSION_DATA__?: SessionState
+	}
 }
 
 const sessionState = window.__SESSION_DATA__ || {}
 
 hydrateRoot(
-  document.getElementById("root") as HTMLElement,
-  <StrictMode>
-    <Root sessionState={sessionState} />
-  </StrictMode>
+	document.getElementById("root") as HTMLElement,
+	<StrictMode>
+		<Root sessionState={sessionState} />
+	</StrictMode>,
 )

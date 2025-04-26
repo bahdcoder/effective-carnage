@@ -12,5 +12,5 @@ export function getPaginationResponseData<T = unknown>(
 			offset,
 			size: data.length,
 		},
-	};
+	}
 }

@@ -1,11 +1,11 @@
-import type { Express } from "express";
-import type { AwilixContainer } from "awilix";
-import type { Logger } from "pino";
+import type { Express } from "express"
+import type { AwilixContainer } from "awilix"
+import type { Logger } from "pino"
 
 export interface ModuleApplicationContext {
-	app: Express;
-	logger: Logger;
-	container: AwilixContainer;
+	app: Express
+	logger: Logger
+	container: AwilixContainer
 }
 
 /**
@@ -15,13 +15,13 @@ export interface ModuleContract {
 	/**
 	 * Name of the module
 	 */
-	name: string;
+	name: string
 
 	/**
 	 * Register the module with the application
 	 * @param app Express application instance
 	 */
-	register(ctx: ModuleApplicationContext): Promise<void>;
+	register(ctx: ModuleApplicationContext): Promise<void>
 
-	shutdown(ctx: ModuleApplicationContext): Promise<void>;
+	shutdown(ctx: ModuleApplicationContext): Promise<void>
 }

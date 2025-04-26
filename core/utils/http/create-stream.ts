@@ -1,5 +1,5 @@
-import type { Response } from "express";
-import { Transform, type TransformCallback } from "node:stream";
+import type { Response } from "express"
+import { Transform, type TransformCallback } from "node:stream"
 
 /**
  * Create a transform stream for piping React SSR output to the response
@@ -13,8 +13,8 @@ export function createTransformStream(res: Response): Transform {
 			encoding: BufferEncoding,
 			callback: TransformCallback,
 		): void {
-			res.write(chunk, encoding);
-			callback();
+			res.write(chunk, encoding)
+			callback()
 		},
-	});
+	})
 }

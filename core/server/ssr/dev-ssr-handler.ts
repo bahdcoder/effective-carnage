@@ -1,12 +1,12 @@
-import fs from "node:fs/promises";
-import type { Response } from "express";
+import fs from "node:fs/promises"
+import type { Response } from "express"
 import type {
 	PipeableStream,
 	RenderToPipeableStreamOptions,
-} from "react-dom/server";
-import type { ViteDevServer } from "vite";
-import type { Logger } from "pino";
-import { BaseSsrHandler } from "./base-ssr-handler";
+} from "react-dom/server"
+import type { ViteDevServer } from "vite"
+import type { Logger } from "pino"
+import { BaseSsrHandler } from "./base-ssr-handler.js"
 
 /**
  * Development SSR handler
@@ -15,17 +15,17 @@ export class DevSsrHandler extends BaseSsrHandler {
 	/**
 	 * Vite dev server instance
 	 */
-	private vite: ViteDevServer;
+	private vite: ViteDevServer
 
 	/**
 	 * Logger instance
 	 */
-	protected logger: Logger;
+	protected logger: Logger
 
 	/**
 	 * Error handler function
 	 */
-	private errorHandler: (error: Error, res: Response) => void;
+	private errorHandler: (error: Error, res: Response) => void
 
 	/**
 	 * Create a new DevSsrHandler
@@ -35,18 +35,18 @@ export class DevSsrHandler extends BaseSsrHandler {
 		logger: Logger,
 		errorHandler: (error: Error, res: Response) => void,
 	) {
-		super();
-		this.vite = vite;
-		this.logger = logger;
-		this.errorHandler = errorHandler;
+		super()
+		this.vite = vite
+		this.logger = logger
+		this.errorHandler = errorHandler
 	}
 
 	/**
 	 * Load the HTML template
 	 */
 	protected async loadTemplate(url: string): Promise<string> {
-		const template = await fs.readFile("public/index.html", "utf-8");
-		return (await this.vite.transformIndexHtml(url, template)) || template;
+		const template = await fs.readFile("public/index.html", "utf-8")
+		return (await this.vite.transformIndexHtml(url, template)) || template
 	}
 
 	/**
@@ -57,20 +57,20 @@ export class DevSsrHandler extends BaseSsrHandler {
 	): Promise<
 		(url: string, options?: RenderToPipeableStreamOptions) => PipeableStream
 	> {
-		const module = await this.vite.ssrLoadModule("core/entry/server.tsx");
+		const module = await this.vite.ssrLoadModule("core/entry/server.tsx")
 
 		if (!module || typeof module.render !== "function") {
-			throw new Error("Failed to load render function from server module");
+			throw new Error("Failed to load render function from server module")
 		}
 
-		return module.render;
+		return module.render
 	}
 
 	/**
 	 * Handle errors
 	 */
 	protected handleError(error: Error, response: Response): void {
-		this.vite.ssrFixStacktrace(error);
-		this.errorHandler(error, response);
+		this.vite.ssrFixStacktrace(error)
+		this.errorHandler(error, response)
 	}
 }

@@ -1,24 +1,24 @@
-import { cleanEnv, num, port, str } from "envalid";
-import type { ModuleApplicationContext } from "@/modules/module.contract";
-import { asValue } from "awilix";
-import { BaseModule } from "@/modules/shared/base.module";
+import { cleanEnv, num, port, str } from "envalid"
+import type { ModuleApplicationContext } from "@/modules/module.contract.js"
+import { asValue } from "awilix"
+import { BaseModule } from "@/modules/shared/base.module.js"
 
 export interface ApplicationEnv {
-	NODE_ENV: "development" | "test" | "production";
-	PORT: number;
-	BASE: string;
-	ABORT_DELAY: number;
-	DATABASE_URL: string;
-	REDIS_URL: string;
-	APP_KEY: string;
+	NODE_ENV: "development" | "test" | "production"
+	PORT: number
+	BASE: string
+	ABORT_DELAY: number
+	DATABASE_URL: string
+	REDIS_URL: string
+	APP_KEY: string
 }
 
 /**
  * Environment module that validates and provides access to environment variables
  */
 export class EnvModule extends BaseModule {
-	public name = "env";
-	private env: Readonly<ApplicationEnv> | undefined;
+	public name = "env"
+	private env: Readonly<ApplicationEnv> | undefined
 
 	/**
 	 * Register the module with the application
@@ -29,13 +29,13 @@ export class EnvModule extends BaseModule {
 		app,
 		container,
 	}: ModuleApplicationContext): Promise<void> {
-		this.env = this.validateEnv();
+		this.env = this.validateEnv()
 
-		app.locals.env = this.env;
+		app.locals.env = this.env
 
 		container.register({
 			env: asValue(this.env),
-		});
+		})
 	}
 
 	/**
@@ -61,6 +61,6 @@ export class EnvModule extends BaseModule {
 			APP_KEY: str({
 				desc: "Application key used for encrypting and descrypting sensitive information",
 			}),
-		});
+		})
 	}
 }

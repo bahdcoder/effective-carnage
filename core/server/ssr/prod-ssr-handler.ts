@@ -1,11 +1,12 @@
-import fs from "node:fs/promises";
-import type { Response } from "express";
+import fs from "node:fs/promises"
+import type { Response } from "express"
 import type {
 	PipeableStream,
 	RenderToPipeableStreamOptions,
-} from "react-dom/server";
-import type { Logger } from "pino";
-import { BaseSsrHandler } from "./base-ssr-handler";
+} from "react-dom/server"
+import type { Logger } from "pino"
+import { BaseSsrHandler } from "./base-ssr-handler.js"
+import { resolve } from "node:path"
 
 /**
  * Production SSR handler
@@ -14,12 +15,12 @@ export class ProdSsrHandler extends BaseSsrHandler {
 	/**
 	 * Logger instance
 	 */
-	protected logger: Logger;
+	protected logger: Logger
 
 	/**
 	 * Error handler function
 	 */
-	private errorHandler: (error: Error, res: Response) => void;
+	private errorHandler: (error: Error, res: Response) => void
 
 	/**
 	 * Create a new ProdSsrHandler
@@ -28,23 +29,23 @@ export class ProdSsrHandler extends BaseSsrHandler {
 		logger: Logger,
 		errorHandler: (error: Error, res: Response) => void,
 	) {
-		super();
-		this.logger = logger;
-		this.errorHandler = errorHandler;
+		super()
+		this.logger = logger
+		this.errorHandler = errorHandler
 	}
 
 	/**
 	 * Get the path to a file in the build directory
 	 */
 	private getBuildPath(path: string): string {
-		return `./build/${path}`;
+		return resolve(process.cwd(), `./build/${path}`)
 	}
 
 	/**
 	 * Load the HTML template
 	 */
 	protected async loadTemplate(_url: string): Promise<string> {
-		return await fs.readFile("./build/entry/client/index.html", "utf-8");
+		return await fs.readFile("./build/entry/client/index.html", "utf-8")
 	}
 
 	/**
@@ -55,19 +56,19 @@ export class ProdSsrHandler extends BaseSsrHandler {
 	): Promise<
 		(url: string, options?: RenderToPipeableStreamOptions) => PipeableStream
 	> {
-		const module = await import(this.getBuildPath("entry/server/server.js"));
+		const module = await import(this.getBuildPath("entry/server/server.js"))
 
 		if (!module || typeof module.render !== "function") {
-			throw new Error("Failed to load render function from server module");
+			throw new Error("Failed to load render function from server module")
 		}
 
-		return module.render;
+		return module.render
 	}
 
 	/**
 	 * Handle errors
 	 */
 	protected handleError(error: Error, res: Response): void {
-		this.errorHandler(error, res);
+		this.errorHandler(error, res)
 	}
 }

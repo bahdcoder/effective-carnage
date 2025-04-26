@@ -3,9 +3,9 @@
  *
  * This file initializes the development server implementation.
  */
-import { IgnitorDev } from "./ignitor/ignitor-dev";
+import { IgnitorDev } from "./ignitor/ignitor-dev.js"
 
-const ignitor = new IgnitorDev();
+const ignitor = new IgnitorDev()
 
-await ignitor.initialize();
-ignitor.start();
+await ignitor.initialize()
+ignitor.start()
