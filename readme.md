@@ -23,22 +23,28 @@ cp .env.example .env
 3. Run docker containers for postgres and redis
 
 ```bash
-docker-compose up --wait
+docker compose up --wait
 ```
 
 4. Install project dependencies
 
 ```bash
-npm run install
+npm install
 ```
 
-5. Run database seed script to get some test events into the database
+5. Run database migrations to create tables needed for the application
+
+```bash
+npm run prisma:migrate:development
+```
+
+6. Run database seed script to get some test events into the database
 
 ```bash
 npm run cli seed_events
 ```
 
-6. Run the application in development mode
+7. Run the application in development mode
 
 ```bash
 npm run dev
@@ -46,25 +52,25 @@ npm run dev
 
 Visit the browser on `http://localhost:5173` to view the running application
 
-7. Run lint checks (and automatically fix any lint issues)
+8. Run lint checks (and automatically fix any lint issues)
 
 ```bash
 npm run lint
 ```
 
-8. Run types checks
+9. Run types checks
 
 ```bash
 npm run checks:types
 ```
 
-9. Run formatting checks (and automatically fix any formatting issues)
+10. Run formatting checks (and automatically fix any formatting issues)
 
 ```bash
 npm run format
 ```
 
-10. Run automated tests
+11. Run automated tests
 
 ```bash
 npm run test
@@ -76,7 +82,7 @@ Please use the following command if you want to generate a coverage report:
 npm run test:coverage
 ```
 
-11. Build the application for production
+12. Build the application for production
 
 ```bash
 npm run build
@@ -84,7 +90,7 @@ npm run build
 
 This command lints, formats, checks for types, and runs tests before actually building the client and server.
 
-12. Run production application on your local computer
+13. Run production application on your local computer
 
 - Change the `NODE_ENV=development` variable in your `.env` file to `NODE_ENV=production`
 - Run the following command to start the application in production mode:
