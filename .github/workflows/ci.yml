@@ -23,7 +23,7 @@ jobs:
     - name: install dependencies
       run: npm ci
 
-    - name: Generate Prisma client
+    - name: generate prisma client
       run: npm run prisma:generate
 
     - name: start docker containers
