@@ -10,38 +10,38 @@ import type { Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
 
 export class BetsController extends BaseController {
-  protected betsService: BetsService
-  protected eventsService: EventsService
+	protected betsService: BetsService
+	protected eventsService: EventsService
 
-  constructor(protected ctx: ModuleApplicationContext) {
-    super(ctx)
+	constructor(protected ctx: ModuleApplicationContext) {
+		super(ctx)
 
-    this.betsService = resolve(ctx.container, "betsService")
-    this.eventsService = resolve(ctx.container, "eventsService")
-  }
+		this.betsService = resolve(ctx.container, "betsService")
+		this.eventsService = resolve(ctx.container, "eventsService")
+	}
 
-  store = async (request: Request, response: Response) => {
-    const eventId = request.params.eventId
+	store = async (request: Request, response: Response) => {
+		const eventId = request.params.eventId
 
-    const event = await this.eventsService.findById(eventId)
+		const event = await this.eventsService.findById(eventId)
 
-    if (!event) {
-      throw new NotFoundException(
-        `We could not find an event with Id: ${eventId}`
-      )
-    }
+		if (!event) {
+			throw new NotFoundException(
+				`We could not find an event with Id: ${eventId}`,
+			)
+		}
 
-    const { amount } = await this.validate(
-      request.body || {},
-      createBetSchema()
-    )
+		const { amount } = await this.validate(
+			request.body || {},
+			createBetSchema(),
+		)
 
-    const bet = await this.betsService.create({
-      event: { connect: { id: eventId } },
-      user: { connect: { id: request.session?.user?.id as string } },
-      amount,
-    })
+		const bet = await this.betsService.create({
+			event: { connect: { id: eventId } },
+			user: { connect: { id: request.session?.user?.id as string } },
+			amount,
+		})
 
-    new HttpResponse(response).status(StatusCodes.CREATED).json({ data: bet })
-  }
+		new HttpResponse(response).status(StatusCodes.CREATED).json({ data: bet })
+	}
 }
