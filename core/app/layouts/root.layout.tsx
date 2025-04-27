@@ -14,10 +14,14 @@ export function RootLayout() {
 		<>
 			<main className="w-full">
 				<div className="w-full border border-b py-4">
-					<header className="max-w-6xl mx-auto px-6 lg:px-0 flex items-center justify-between">
-						<img src={getAssetsPath("/logo.svg")} alt="betting platform logo" />
+					<header className="max-w-6xl mx-auto px-6 lg:px-0 flex flex-col gap-2 lg:gap-0 lg:flex-row lg:items-center lg:justify-between">
+						<img
+							src={getAssetsPath("/logo.svg")}
+							className="max-w-32 lg:w-auto"
+							alt="betting platform logo"
+						/>
 
-						<div className="flex items-center gap-4">
+						<div className="flex flex-col lg:flex-row gap-2 lg:items-center lg:gap-4">
 							{user ? (
 								<>
 									<p className="text-foreground">Hey, {user?.email}</p>
