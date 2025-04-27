@@ -43,7 +43,7 @@ export class AuthController extends BaseController {
 
 	store = async (request: Request, response: Response) => {
 		const data = await this.validate(
-			request.body,
+			request.body || {},
 			createUserSchema(this.usersService),
 		)
 
@@ -63,7 +63,7 @@ export class AuthController extends BaseController {
 	}
 
 	update = async (request: Request, response: Response) => {
-		const data = await this.validate(request.body, loginUserSchema())
+		const data = await this.validate(request.body || {}, loginUserSchema())
 
 		const user = await this.usersService.findByEmail(data.email)
 

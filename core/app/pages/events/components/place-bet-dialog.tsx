@@ -11,8 +11,12 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useSession } from "@/app/state/session-state"
 import { Button } from "@/app/ui/button"
 import { usePlaceBetMutation } from "@/app/pages/events/hooks/use-place-bet.mutation"
-import { ServerErrorMessage } from "@/app/components/validation-errors"
+import {
+	ServerErrorMessage,
+	ValidationErrorsForField,
+} from "@/app/components/validation-errors"
 import { useGetAssetsPath } from "@/app/hooks/use-get-assets-path.hooks"
+import { Input } from "@/app/ui/input"
 
 export interface PlaceBetDialogProps {
 	event?: Event | null
@@ -39,6 +43,16 @@ export function PlaceBetDialog({
 	function onLoginToPlaceBet() {
 		onOpenChange?.(false)
 		sessionDialog?.onOpenChange(true)
+	}
+
+	function onPlaceBetFormSubmitted(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault()
+
+		const payload = Object.fromEntries(new FormData(event.currentTarget))
+
+		mutate({
+			amount: payload.amount as string,
+		})
 	}
 
 	return (
@@ -73,13 +87,22 @@ export function PlaceBetDialog({
 
 					<div className="w-full flex justify-center pb-8 px-6">
 						{user ? (
-							<Button
-								className="w-full"
-								loading={isPending}
-								onClick={() => mutate()}
+							<form
+								method="post"
+								onSubmit={onPlaceBetFormSubmitted}
+								className="w-full grid grid-cols-1 gap-4"
 							>
-								Place bet - odds : {event?.odds?.toString()}
-							</Button>
+								<div className="flex flex-col gap-2">
+									<Input name="amount" type="number" placeholder="Example: 5" />
+									<ValidationErrorsForField
+										field="amount"
+										response={error?.response?.data}
+									/>
+								</div>
+								<Button className="w-full" loading={isPending} type="submit">
+									Place bet - odds : {event?.odds?.toString()}
+								</Button>
+							</form>
 						) : (
 							<Button className="w-full" onClick={onLoginToPlaceBet}>
 								Login to place bet

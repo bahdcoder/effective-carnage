@@ -1,3 +1,4 @@
+import { createBetSchema } from "@/modules/api/bets/dto/create-bet.dto"
 import type { BetsService } from "@/modules/api/bets/services/bets.service.js"
 import type { EventsService } from "@/modules/api/events/services/events.service.js"
 import { NotFoundException } from "@/modules/errors/exceptions/not-found.exception.js"
@@ -30,10 +31,15 @@ export class BetsController extends BaseController {
 			)
 		}
 
+		const { amount } = await this.validate(
+			request.body || {},
+			createBetSchema(),
+		)
+
 		const bet = await this.betsService.create({
 			event: { connect: { id: eventId } },
 			user: { connect: { id: request.session?.user?.id as string } },
-			amount: 0,
+			amount,
 		})
 
 		new HttpResponse(response).status(StatusCodes.CREATED).json({ data: bet })

@@ -20,16 +20,20 @@ export function usePlaceBetMutation({
 	onSuccess,
 }: UsePlaceBetMutationProps) {
 	const { apiClient } = useApiClient()
-	return useMutation<AxiosResponse<ServerResponse>, AxiosError<ServerResponse>>(
-		{
-			async mutationFn() {
-				return apiClient.post(`/events/${eventId}/bets`)
-			},
-			onSuccess(...args) {
-				toast.success("Successfully placed bet.")
-
-				onSuccess?.(...args)
-			},
+	return useMutation<
+		AxiosResponse<ServerResponse>,
+		AxiosError<ServerResponse>,
+		{ amount: string }
+	>({
+		async mutationFn({ amount }) {
+			return apiClient.post(`/events/${eventId}/bets`, {
+				amount: Number.parseInt(amount),
+			})
 		},
-	)
+		onSuccess(...args) {
+			toast.success("Successfully placed bet.")
+
+			onSuccess?.(...args)
+		},
+	})
 }
