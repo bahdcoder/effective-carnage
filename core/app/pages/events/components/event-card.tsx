@@ -24,7 +24,7 @@ export function EventCard({ event, onSelect }: EventCardProps) {
 				<p className="text-foreground font-bold">{event?.odds?.toString()}</p>
 				<Button
 					onClick={() => onSelect?.(event)}
-					className="hidden group-hover:block"
+					className="lg:hidden lg:group-hover:block"
 				>
 					Place a bet
 				</Button>
